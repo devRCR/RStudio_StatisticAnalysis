@@ -148,7 +148,7 @@ cat("Nombre: Renzo José \nApellidos: Chan Rios \nProfesioón=Ingeniero")
 # Mostrar Liquidación neta
 
 liquidacion_neta<-function(sueldoBasico,añosServicio,numeroHijos){
-  liquidacion = 0.65*sueldoBasico*añosServicio
+  liquidacion <- 0.65*sueldoBasico*añosServicio
   cts<-0.3*liquidacion
   asignacionFamiliar<-0.5*sueldoBasico*añosServicio
   neto=liquidacion + cts + asignacionFamiliar
