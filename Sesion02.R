@@ -279,6 +279,6 @@ data1<-data.frame(empleado=c("juan","jose","pedro","luis","ana","rosa"),
                           "abogado","secretaria"))
 data2<-data.frame(empleado=c("juan","jose","pedro","luis","laura","liz"),
                   sueldo=c(5600,4500,3500,6700,6500,3500))
-(trabajadores<-merge(data1,data2,all.y=TRUE)) # comunes e intersección
+(trabajadores<-merge(data1,data2,all.y=TRUE)) # COMUNES e   INTERSECCION
 
 
