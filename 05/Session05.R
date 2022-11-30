@@ -43,3 +43,15 @@ attach(datos)
 
 (consultas<-select(datos,c(Segmento,Empleado,Departamento,VentasBrutas)))
 (consultas<-select(datos,-c(Segmento,Empleado,Departamento,VentasBrutas)))
+
+# cambiar nombre a las columnas en la consulta
+(consultas<-select(datos,c(TipoCliente=Segmento,
+                           Trabajador=Empleado,
+                           Ubicacion=Departamento,
+                           VentaTotal=VentasBrutas)))
+
+# primeras y ultimas filas
+(consultas<-head(datos))
+(consulta<-tail(datos))
+(consulta<-head(datos,10))
+(consulta<-tail(datos,15))
