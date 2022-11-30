@@ -115,3 +115,70 @@ distinct(datos,Empleado)
 (consulta<-select(datos,Segmento,Empleado,Departamento,UnidadesVendidas) %>% 
     filter(Departamento %in% c("Arequipa","Lima")) %>% 
     arrange(desc(UnidadesVendidas)))
+
+(consulta<-select(datos,Departamento,Empleado,TipoBicicleta,Ventas,UnidadesVendidas) %>% 
+    mutate(IGV=Ventas*0.18) %>% 
+    filter(Departamento=="Lima" & between(UnidadesVendidas,1000,2000)) %>% 
+    arrange(TipoBicicleta,desc(Empleado))
+)
+
+
+#mostrar filas
+(consulta<-select(datos,Departamento,Empleado,TipoBicicleta,Ventas,UnidadesVendidas) %>%
+    slice(10:20))
+
+(consulta<-select(datos,Departamento,Empleado,TipoBicicleta,Ventas,UnidadesVendidas) %>%
+    slice(10:20,50:60))
+
+
+#top N
+# 5 ventas mayores
+(consulta<-select(datos,Departamento,Empleado,TipoBicicleta,Ventas) %>%
+    top_n(5,Ventas) %>% arrange(desc(Ventas)))
+
+# 5 ventas menores
+(consulta<-select(datos,Departamento,Empleado,TipoBicicleta,Ventas) %>%
+    top_n(-5,Ventas) %>% arrange(desc(Ventas)))
+
+#funciones agrupadas min(),max(),mean(),median(),sum()
+(consulta<-select(datos,Departamento,Ventas) %>%
+    group_by(Departamento) %>% 
+    summarise(Total=sum(Ventas)))
+
+
+(consulta<-select(datos,Empleado,Ventas) %>%
+    group_by(Empleado) %>% 
+    summarise(Promedio=mean(Ventas)))
+
+(consulta<-select(datos,Departamento,Distrito,Ventas) %>%
+    group_by(Departamento,Distrito) %>% 
+    summarise(MaximaVentas=max(Ventas)))
+
+
+
+#nombras los nombres de las hojas de un archivo excel
+excel_sheets("Datos.xlsx")
+clientes<-read_excel("Datos.xlsx",sheet="Cliente")
+ventas<-read_excel("Datos.xlsx",sheet="Ventas")
+
+excel_sheets("2.-Bancos.xlsx")
+clientes<-read_excel("2.-Bancos.xlsx",sheet="Clientes")
+cuentas<-read_excel("2.-Bancos.xlsx",sheet="Cuentas")
+tipo<-read_excel("2.-Bancos.xlsx",sheet="Tipo_Cuentas")
+movimientos<-read_excel("2.-Bancos.xlsx",sheet="Movimientos")
+
+names(clientes)
+names(cuentas)
+bancos<-inner_join(clientes,cuentas,by="cli_codigo")
+names(bancos)
+names(tipo)
+bancos<-inner_join(bancos,tipo,by="cod_cta")
+names(bancos)
+names(movimientos)
+bancos<-inner_join(bancos,movimientos,tipo,by="num_cta")
+names(bancos)
+
+(datos<-bancos %>% group_by(departamento,cli_nombre) %>% 
+    summarise(Total_saldo=sum(monto),
+              Prom_Saldo=mean(monto)
+              ))
