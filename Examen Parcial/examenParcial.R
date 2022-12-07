@@ -75,21 +75,50 @@ text(b2,2,table(papeletas$"ZONA ACCIDENTE"),pos=3)
 
 # 3.- Mostrar los propietarios, sexo, categoría y total de papeletas
 # Unimos tabla propietarios con tabla vehículos por # de DNI
-(resultado<-inner_join(propietarios,vehiculos,by="DNIPRO"))
+resultado<-full_join(propietarios,vehiculos,by="DNIPRO")
 # Unimos tabla resultado con tabla papeletas por # de placa
-(resultado<-full_join(resultado,papeletas,by="NROPLA"))
-# Ordenamos por Propietario, sexo, categoría
-(consulta<-select(resultado,DNIPRO,SEXO,CATEGORIA))
+resultado<-inner_join(resultado,papeletas,by="NROPLA")
+# Ordenamos por DNIPRO, Propietario, sexo, categoría
+consulta<-distinct(propietarios,PROPIETARIO,SEXO,CATEGORIA)
 # calculamos el total de papeletas
-(totalPapeletas<-resultado %>% group_by(DNIPRO) %>% summarise("TOTAL PAPELETAS" = n()))
-# mostramos la tabla final
-(resultadoFinal<-inner_join(consulta,totalPapeletas,by="DNIPRO"))
+totalPapeletas<-resultado %>% group_by(PROPIETARIO) %>% summarise("TOTAL PAPELETAS" = n())
+# Unimos la tabla consulta con la tabla del total de papeletas
+resultadoFinal<-full_join(consulta,totalPapeletas,by="PROPIETARIO")
+# Reemplazamos los valores na por 0
+resultadoFinal<-resultadoFinal %>% replace(is.na(.), 0)
+# Ordenamos de forma ascendente por el # de papeletas
+resultadoFinal<-arrange(resultadoFinal,`TOTAL PAPELETAS`)
+# Convertimos el resultado final en un DataFrame
+data.frame(resultadoFinal)
+
 
 # 4.-Mostrar la cantidad de papeletas por tipo de vehículo solo mostrar 
 #    motocicleta, camioneta y microbús
-
+# Unimos la hoja de datos vehículos con papeletas por # de placa
+# usando intersscción para así solo contar con los vehiculos que tienen papeleta
+df<-inner_join(vehiculos,papeletas,by="NROPLA")
+# filtramos por tipo de vehículo MOTOCICLETA, CAMIONETA o MICROBUS
+df1<-filter(df,`TIPO VEHICULO` == "MOTOCICLETA" | 
+              `TIPO VEHICULO` == "CAMIONETA" |
+              `TIPO VEHICULO` == "MICROBUS")
+# Agrupamos por Tipo de vehículo y mostramos el total de papeletas
+(totalPapeletas<-df1 %>% group_by(`TIPO VEHICULO`) %>% 
+    summarise("TOTAL PAPELETAS" = n()))
 
 # 5.-Mostrar el monto de papeletas y cantidad de papeletas por policía 
 #    considerar solo las papeletas donde se registró fallecidos y lesionados
 
+# Filtramos Papeletas considerando solo donde hubo FALLECIDOS Y LESIONADOS
+df<-filter(papeletas,FALLECIDOS>0 & LESIONADOS>0)
+# Mostramos el resultado final de la tabla con la cantidad de papeletas
+# y el monto total
+(resultado<-df %>% group_by(POLICIA) %>% 
+  summarise("MONTO PAPELETAS"=sum(MONTO),"CANT. PAPELETAS" = n()))
 
+
+# Filtramos Papeletas considerando solo donde hubo FALLECIDOS O LESIONADOS
+df<-filter(papeletas,FALLECIDOS>0 | LESIONADOS>0)
+# Mostramos el resultado final de la tabla con la cantidad de papeletas
+# y el monto total
+(resultado<-df %>% group_by(POLICIA) %>% 
+    summarise("MONTO PAPELETAS"=sum(MONTO),"CANT. PAPELETAS" = n()))
