@@ -26,7 +26,7 @@ papeletas<-read_excel("BD_Transito.xlsx",sheet = "PAPELETAS")
 #   las papeletas que no pagaron.
 
 
-# PREGUNTA 1: solución rápida sin usar funciones
+# SOLUCION 1: solución rápida sin usar funciones
 
 # usando ifelse
 papeletas$IMPUESTO<-ifelse(papeletas$"ESTADO PAPELETA"=="NO",
@@ -37,7 +37,7 @@ papeletas$IMPUESTO<-ifelse(papeletas$"ESTADO PAPELETA"=="NO",
   TRUE~0.0
 )))
 
-# PREGUNTA 1: Solucion usando una función
+# SOLUCION 1: Solucion usando una función
 impuesto<-function(dataFrame,estadoPapeleta){
   ifelse(dataFrame$"ESTADO PAPELETA"==estadoPapeleta,
          papeletas$"MONTO"*0.13,0.0)
@@ -50,6 +50,7 @@ papeletas$IMPUESTO<-impuesto(papeletas,"NO")
 #   
 #   Cantidad de papeletas por departamento
 
+# SOLUCION 2:
 b1<-barplot(table(papeletas$DEPARTAMENTO),
            main="# de Papeletas por Departamento",
            col=rainbow(10),
@@ -74,6 +75,8 @@ text(b2,2,table(papeletas$"ZONA ACCIDENTE"),pos=3)
 
 
 # 3.- Mostrar los propietarios, sexo, categoría y total de papeletas
+
+# SOLUCION 3:
 # Unimos tabla propietarios con tabla vehículos por # de DNI
 resultado<-full_join(propietarios,vehiculos,by="DNIPRO")
 # Unimos tabla resultado con tabla papeletas por # de placa
@@ -96,6 +99,8 @@ data.frame(resultadoFinal)
 #    motocicleta, camioneta y microbús
 # Unimos la hoja de datos vehículos con papeletas por # de placa
 # usando intersscción para así solo contar con los vehiculos que tienen papeleta
+
+# SOLUCION 4:
 df<-inner_join(vehiculos,papeletas,by="NROPLA")
 # filtramos por tipo de vehículo MOTOCICLETA, CAMIONETA o MICROBUS
 df1<-filter(df,`TIPO VEHICULO` == "MOTOCICLETA" | 
@@ -108,6 +113,7 @@ df1<-filter(df,`TIPO VEHICULO` == "MOTOCICLETA" |
 # 5.-Mostrar el monto de papeletas y cantidad de papeletas por policía 
 #    considerar solo las papeletas donde se registró fallecidos y lesionados
 
+# SOLUCION 5:
 # Filtramos Papeletas considerando solo donde hubo FALLECIDOS Y LESIONADOS
 df<-filter(papeletas,FALLECIDOS>0 & LESIONADOS>0)
 # Mostramos el resultado final de la tabla con la cantidad de papeletas
