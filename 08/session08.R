@@ -49,7 +49,7 @@ ggplot(train,
 (y_pred<-predict(modelo3,test))
 
 
-# nueva data
+# caso 2:
 # CONCENTRACION  --> 14,15
 predict(modelo3,list(CONCENTRACION=c(14,15)))
 
@@ -74,6 +74,40 @@ summary(modelo)
 test
 (y_pred<-predict(modelo,test))
 (matriz<-data.frame(DMFper100=test,Predecir=y_pred))
+
+
+ggplot(datos,aes(x=DMFper100,y=FlouridePPM))+
+  geom_point()+
+  geom_smooth(method="lm",formula=y~poly(x,9),se=FALSE,col="green")+
+  theme_light()
+
+predict(modelo,list(DMFper100=c(1200,1300)))
+
+
+# caso 3: Polinomial
+datos<-pressure
+plot(datos)
+
+for (x in 2:10){
+  modelo<-lm(pressure~poly(temperature,x),data=datos)
+  cat("\nGrado :",x,"  ======> R2 :",summary(modelo)$r.squared)
+}
+
+modelo<-lm(pressure~poly(temperature,7),data=datos)
+summary(modelo)
+
+ggplot(datos,
+       aes(x=temperature,y=pressure))+
+       geom_point()+
+       geom_smooth(method="lm",formula=y~poly(x,7),se=FALSE,
+                   col="green")+
+  theme_light()
+
+predecir=predict(modelo,list(temperature=c(100:150)))
+(matriz=data.frame(Temperatura=c(100:150),predecir))
+
+
+
 
 
 
