@@ -78,6 +78,7 @@ df<-data.frame(age=93, sex=1, cp=3, trtbps=145, chol=230, fbs=1, restecg=0,
 df2<-data.frame(age=60, sex=1, cp=0, trtbps=130, chol=144, fbs=1, restecg=0, 
                thalachh=150, exng=0, oldpeak=1.4, slp=2, caa=0, thall=3)
 
+
 (predecir<-predict(modelo1,df2))
 (predecir<-predict(modelo2,df2))
 
